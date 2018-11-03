@@ -3,7 +3,7 @@ from datetime import datetime
 
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QMainWindow, QComboBox, QPushButton, QWidget, QGridLayout, QAction, QApplication, \
-    QStatusBar, QLabel
+    QStatusBar, QLabel, QDialog
 
 import populate_db
 
@@ -37,9 +37,11 @@ class EmailBlast(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         grid_layout = QGridLayout(self)
+
         self.selected = None
         self.start_time = None
         self.stop_time = None
+        self.is_running = False
 
         self.create_combo_box()
         self.create_buttons()
@@ -73,6 +75,7 @@ class EmailBlast(QWidget):
 
     def start_timer(self):
         self.start_time = datetime.now()
+        self.is_running = True
         self.combo_box.setEnabled(False)
         self.start_button.setEnabled(False)
         self.stop_button.setEnabled(True)
@@ -82,6 +85,7 @@ class EmailBlast(QWidget):
 
     def end_timer(self):
         self.stop_time = datetime.now()
+        self.is_running = False
         self.combo_box.setEnabled(True)
         self.start_button.setEnabled(True)
         self.stop_button.setEnabled(False)
@@ -97,7 +101,6 @@ class EmailBlast(QWidget):
     def status_timer(self):
         self.time_count += 1
         self.status_label.setText(f"{self.selected} for {self.time_count} minutes")
-
 
 
 if __name__ == "__main__":
