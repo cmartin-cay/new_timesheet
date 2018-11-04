@@ -1,7 +1,8 @@
 import sys
 
-from PySide2.QtWidgets import QListWidget, QWidget, QApplication, QListWidgetItem, QGridLayout, QPushButton, \
-    QVBoxLayout, QAbstractItemView
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QListWidget, QWidget, QApplication, QGridLayout, QPushButton, QAbstractItemView
+import functools
 
 
 class ClientList(QWidget):
@@ -9,38 +10,48 @@ class ClientList(QWidget):
         super().__init__(parent)
         grid_layout = QGridLayout(self)
 
-        self.selected_clients = QListWidget()
-        self.selected_clients.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.selected_clients.addItems(['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', ])
-        self.all_clients = QListWidget()
+        # self.selected_clients = QListWidget()
+        # self.selected_clients.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.active_clients = ClientListWidget()
+        self.active_clients.addItems(['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'])
+        self.inactive_clients = ClientListWidget()
+
 
         self.move_left = QPushButton('<-')
-        self.move_left.clicked.connect(self.move_items_left)
+        self.move_left.clicked.connect(functools.partial(self.move_items, self.inactive_clients, self.active_clients))
         self.move_right = QPushButton('->')
-        self.move_right.clicked.connect(self.move_items_right)
+        self.move_right.clicked.connect(functools.partial(self.move_items, self.active_clients, self.inactive_clients))
 
 
-        grid_layout.addWidget(self.selected_clients, 0, 0)
-        grid_layout.addWidget(self.move_left, 0, 1)
-        grid_layout.addWidget(self.move_right,1, 1)
-        grid_layout.addWidget(self.all_clients, 0, 2)
+        grid_layout.addWidget(self.active_clients, 0, 0, 2, 1)
+        grid_layout.addWidget(self.move_left, 0, 1, 1, 1)
+        grid_layout.setAlignment(self.move_left, Qt.AlignBottom)
+        grid_layout.addWidget(self.move_right,1, 1, 1, 1)
+        grid_layout.setAlignment(self.move_right, Qt.AlignTop)
+        grid_layout.addWidget(self.inactive_clients, 0, 2, 2, 1)
 
     def print_items(self):
-        items = self.selected_clients.selectedItems()
+        items = self.active_clients.selectedItems()
         for item in items:
             print(item.text())
 
-    def move_items_left(self):
-        for item in self.all_clients.selectedItems():
-            self.all_clients.takeItem(self.all_clients.row(item))
-            self.selected_clients.addItem(item.text())
+    def move_items(self, original_list, new_list):
+        for item in original_list.selectedItems():
+            original_list.takeItem(original_list.row(item))
+            new_list.addItem(item.text())
 
 
     def move_items_right(self):
-        for item in self.selected_clients.selectedItems():
-            self.selected_clients.takeItem(self.selected_clients.row(item))
-            self.all_clients.addItem(item.text())
+        for item in self.active_clients.selectedItems():
+            self.active_clients.takeItem(self.active_clients.row(item))
+            self.inactive_clients.addItem(item.text())
 
+class ClientListWidget(QListWidget):
+    def __init__(self):
+        super().__init__()
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setMinimumSize(40,200)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
