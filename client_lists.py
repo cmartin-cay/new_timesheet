@@ -1,7 +1,8 @@
 import sys
 
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QListWidget, QWidget, QApplication, QGridLayout, QPushButton, QAbstractItemView
+from PySide2.QtWidgets import QListWidget, QWidget, QApplication, QGridLayout, QPushButton, QAbstractItemView, \
+    QFormLayout, QLineEdit, QLabel, QHBoxLayout
 import functools
 
 
@@ -22,12 +23,16 @@ class ClientList(QWidget):
         self.move_right = QPushButton('->')
         self.move_right.clicked.connect(functools.partial(self.move_items, self.active_clients, self.inactive_clients))
 
+        add_client_row = QHBoxLayout()
+        self.new_client_name = QLineEdit()
+        self.add_client_button  = QPushButton("Add Client")
+        add_client_row.addWidget(self.new_client_name)
+        add_client_row.addWidget(self.add_client_button)
 
+        grid_layout.addLayout(add_client_row, 2, 0, 1, 2)
         grid_layout.addWidget(self.active_clients, 0, 0, 2, 1)
-        grid_layout.addWidget(self.move_left, 0, 1, 1, 1)
-        grid_layout.setAlignment(self.move_left, Qt.AlignBottom)
-        grid_layout.addWidget(self.move_right,1, 1, 1, 1)
-        grid_layout.setAlignment(self.move_right, Qt.AlignTop)
+        grid_layout.addWidget(self.move_left, 0, 1, 1, 1, Qt.AlignBottom)
+        grid_layout.addWidget(self.move_right,1, 1, 1, 1, Qt.AlignTop)
         grid_layout.addWidget(self.inactive_clients, 0, 2, 2, 1)
 
     def print_items(self):
