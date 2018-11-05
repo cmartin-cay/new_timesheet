@@ -41,7 +41,8 @@ class ClientList(QWidget):
         grid_layout.addWidget(self.move_left, 2, 1, 1, 1, Qt.AlignBottom)
         grid_layout.addWidget(self.move_right, 3, 1, 1, 1, Qt.AlignTop)
         grid_layout.addWidget(self.inactive_clients, 2, 2, 2, 1)
-        grid_layout.addWidget(self.button_box, 4, 0, 1, 3, Qt.AlignCenter)
+        grid_layout.addWidget(QHLine(), 4, 0, 1, 3)
+        grid_layout.addWidget(self.button_box, 5, 0, 1, 3, Qt.AlignCenter)
 
     def update_client_db(self):
         # TODO bulk inserstion of database. Currently each client in the list is a db commit
