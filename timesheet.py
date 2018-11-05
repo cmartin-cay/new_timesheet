@@ -1,5 +1,6 @@
 import sys
 from datetime import datetime
+from client_lists import ClientList
 
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QMainWindow, QComboBox, QPushButton, QWidget, QGridLayout, QAction, QApplication, \
@@ -15,6 +16,7 @@ class MainWindow(QMainWindow):
         self.email_blast_widget = EmailBlast(parent=self)
         self.setCentralWidget(self.email_blast_widget)
         self.setWindowTitle("Timesheet")
+        self.client_list = ClientList()
         # Set up a menubar and File menu
         menu_bar = self.menuBar()
         file_menu = menu_bar.addMenu('File')
@@ -26,6 +28,7 @@ class MainWindow(QMainWindow):
         file_menu.addAction(save_action)
         # Connect the buttons
         save_action.triggered.connect(self.email_blast_widget.enter_time)
+        open_action.triggered.connect(self.client_list.show)
 
         # Set up a statusbar
         self.status_bar = QStatusBar()
@@ -57,7 +60,7 @@ class EmailBlast(QWidget):
     def create_combo_box(self):
         self.combo_box = QComboBox(self)
         self.combo_box.setEditable(True)
-        self.combo_box.addItems(populate_db.show_client())
+        self.combo_box.addItems(populate_db.show_clients(active=True))
         self.combo_box.setCurrentIndex(-1)
         self.combo_box.activated.connect(self.handle_activate)
         self.combo_box.currentTextChanged.connect(self.handle_activate)
@@ -96,7 +99,6 @@ class EmailBlast(QWidget):
 
     def enter_time(self):
         populate_db.enter_time(name=self.selected, start=self.start_time, end=self.stop_time)
-
 
     def status_timer(self):
         self.time_count += 1
