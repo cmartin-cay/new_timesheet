@@ -4,7 +4,7 @@ from populate_db import show_clients, show_all_clients, activate_client, enter_c
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QListWidget, QWidget, QApplication, QGridLayout, QPushButton, QAbstractItemView, \
-    QLineEdit, QHBoxLayout, QFrame
+    QLineEdit, QHBoxLayout, QFrame, QDialogButtonBox
 
 
 class ClientList(QWidget):
@@ -31,8 +31,9 @@ class ClientList(QWidget):
         add_client_row.addWidget(self.new_client_name)
         add_client_row.addWidget(self.add_client_button)
 
-        self.ok_button = QPushButton("Ok")
-        self.ok_button.clicked.connect(self.update_client_db)
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.update_client_db)
+        self.button_box.rejected.connect(self.close)
 
         grid_layout.addLayout(add_client_row, 0, 0, 1, 2)
         grid_layout.addWidget(QHLine(), 1, 0, 1, 3)
@@ -40,7 +41,7 @@ class ClientList(QWidget):
         grid_layout.addWidget(self.move_left, 2, 1, 1, 1, Qt.AlignBottom)
         grid_layout.addWidget(self.move_right, 3, 1, 1, 1, Qt.AlignTop)
         grid_layout.addWidget(self.inactive_clients, 2, 2, 2, 1)
-        grid_layout.addWidget(self.ok_button, 4, 0, 1, 3, Qt.AlignCenter)
+        grid_layout.addWidget(self.button_box, 4, 0, 1, 3, Qt.AlignCenter)
 
     def update_client_db(self):
         # TODO bulk inserstion of database. Currently each client in the list is a db commit
@@ -58,6 +59,7 @@ class ClientList(QWidget):
             else:
                 enter_client(client)
                 inactivate_client(client)
+        self.close()
 
     def move_items(self, original_list, new_list):
         for item in original_list.selectedItems():
