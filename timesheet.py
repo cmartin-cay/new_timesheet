@@ -22,8 +22,8 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         # Setting a Central Widget
-        self.email_blast_widget = EmailBlast(parent=self)
-        self.setCentralWidget(self.email_blast_widget)
+        self.timer_widget = TimerWidget(parent=self)
+        self.setCentralWidget(self.timer_widget)
         self.setWindowTitle("Timesheet")
         self.client_list = ClientList()
         # Set up a menubar and File menu
@@ -36,16 +36,16 @@ class MainWindow(QMainWindow):
         file_menu.addAction(close_action)
         file_menu.addAction(save_action)
         # Connect the buttons
-        save_action.triggered.connect(self.email_blast_widget.enter_time)
+        save_action.triggered.connect(self.timer_widget.enter_time)
         open_action.triggered.connect(self.client_list.show)
 
         # Set up a statusbar
         self.status_bar = QStatusBar()
-        self.status_bar.addWidget(self.email_blast_widget.status_label)
+        self.status_bar.addWidget(self.timer_widget.status_label)
         self.setStatusBar(self.status_bar)
 
 
-class EmailBlast(QWidget):
+class TimerWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         grid_layout = QGridLayout(self)
