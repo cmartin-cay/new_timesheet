@@ -23,7 +23,7 @@ from PySide2.QtWidgets import (
     QDialog)
 
 
-class ClientList(QDialog, QWidget):
+class ClientList(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         grid_layout = QGridLayout(self)
