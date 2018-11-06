@@ -25,7 +25,6 @@ class MainWindow(QMainWindow):
         self.timer_widget = TimerWidget(parent=self)
         self.setCentralWidget(self.timer_widget)
         self.setWindowTitle("Timesheet")
-        self.client_list = ClientList()
         # Set up a menubar and File menu
         menu_bar = self.menuBar()
         file_menu = menu_bar.addMenu("File")
@@ -37,12 +36,16 @@ class MainWindow(QMainWindow):
         file_menu.addAction(save_action)
         # Connect the buttons
         save_action.triggered.connect(self.timer_widget.enter_time)
-        open_action.triggered.connect(self.client_list.show)
+        open_action.triggered.connect(self.show_client_list)
 
         # Set up a statusbar
         self.status_bar = QStatusBar()
         self.status_bar.addWidget(self.timer_widget.status_label)
         self.setStatusBar(self.status_bar)
+
+    def show_client_list(self):
+        self.dialog = ClientList(parent=self)
+        self.dialog.show()
 
 
 class TimerWidget(QWidget):

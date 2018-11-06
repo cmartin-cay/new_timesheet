@@ -20,10 +20,10 @@ from PySide2.QtWidgets import (
     QHBoxLayout,
     QFrame,
     QDialogButtonBox,
-)
+    QDialog)
 
 
-class ClientList(QWidget):
+class ClientList(QDialog, QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         grid_layout = QGridLayout(self)
@@ -90,6 +90,8 @@ class ClientList(QWidget):
             else:
                 enter_client(client)
                 inactivate_client(client)
+        self.parent().timer_widget.combo_box.clear()
+        self.parent().timer_widget.combo_box.addItems(show_clients(active=True))
         self.close()
 
     def move_items(self, original_list, new_list):
