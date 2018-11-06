@@ -92,6 +92,7 @@ class ClientList(QDialog):
                 inactivate_client(client)
         self.parent().timer_widget.combo_box.clear()
         self.parent().timer_widget.combo_box.addItems(show_clients(active=True))
+        self.parent().timer_widget.combo_box.setCurrentIndex(-1)
         self.close()
 
     def move_items(self, original_list, new_list):

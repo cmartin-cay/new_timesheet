@@ -45,6 +45,7 @@ class MainWindow(QMainWindow):
 
     def show_client_list(self):
         self.dialog = ClientList(parent=self)
+        self.dialog.setModal(True)
         self.dialog.show()
 
 
