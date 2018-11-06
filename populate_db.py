@@ -8,7 +8,7 @@ def make_session():
     Generate a SQLAlchemy session
     :return: SQLAlchemy session
     """
-    engine = create_engine('sqlite:///timesheet.db')
+    engine = create_engine("sqlite:///timesheet.db")
     Base.metadata.bind = engine
 
     DBSession = sessionmaker(bind=engine)
@@ -28,6 +28,16 @@ def enter_time(name, start, end):
     entry = Time(name=name, start_time=start, end_time=end)
     session.add(entry)
     session.commit()
+
+def enter_multiple_time(dict_list):
+    """
+    Create multiple Time entries in the Time database
+    :param dictionary: List of dictionaries formatted to match the Time class
+    :return: None
+    """
+    session = make_session()
+
+
 
 
 def enter_client(name):

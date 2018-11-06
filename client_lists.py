@@ -1,10 +1,26 @@
 import functools
 import sys
-from populate_db import show_clients, show_all_clients, activate_client, enter_client, inactivate_client
+from populate_db import (
+    show_clients,
+    show_all_clients,
+    activate_client,
+    enter_client,
+    inactivate_client,
+)
 
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QListWidget, QWidget, QApplication, QGridLayout, QPushButton, QAbstractItemView, \
-    QLineEdit, QHBoxLayout, QFrame, QDialogButtonBox
+from PySide2.QtWidgets import (
+    QListWidget,
+    QWidget,
+    QApplication,
+    QGridLayout,
+    QPushButton,
+    QAbstractItemView,
+    QLineEdit,
+    QHBoxLayout,
+    QFrame,
+    QDialogButtonBox,
+)
 
 
 class ClientList(QWidget):
@@ -12,17 +28,23 @@ class ClientList(QWidget):
         super().__init__(parent)
         grid_layout = QGridLayout(self)
 
-        # self.selected_clients = QListWidget()
-        # self.selected_clients.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.active_clients = ClientListWidget()
         self.active_clients.addItems(show_clients(active=True))
         self.inactive_clients = ClientListWidget()
         self.inactive_clients.addItems(show_clients(active=False))
 
-        self.move_left = QPushButton('<-')
-        self.move_left.clicked.connect(functools.partial(self.move_items, self.inactive_clients, self.active_clients))
-        self.move_right = QPushButton('->')
-        self.move_right.clicked.connect(functools.partial(self.move_items, self.active_clients, self.inactive_clients))
+        self.move_left = QPushButton("<-")
+        self.move_left.clicked.connect(
+            functools.partial(
+                self.move_items, self.inactive_clients, self.active_clients
+            )
+        )
+        self.move_right = QPushButton("->")
+        self.move_right.clicked.connect(
+            functools.partial(
+                self.move_items, self.active_clients, self.inactive_clients
+            )
+        )
 
         add_client_row = QHBoxLayout()
         self.new_client_name = QLineEdit()
@@ -31,7 +53,9 @@ class ClientList(QWidget):
         add_client_row.addWidget(self.new_client_name)
         add_client_row.addWidget(self.add_client_button)
 
-        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+        )
         self.button_box.accepted.connect(self.update_client_db)
         self.button_box.rejected.connect(self.close)
 
@@ -47,8 +71,14 @@ class ClientList(QWidget):
     def update_client_db(self):
         # TODO bulk inserstion of database. Currently each client in the list is a db commit
         all_clients = show_all_clients()
-        active_clients = [self.active_clients.item(i).text() for i in range(self.active_clients.count())]
-        inactive_clients = [self.inactive_clients.item(i).text() for i in range(self.inactive_clients.count())]
+        active_clients = [
+            self.active_clients.item(i).text()
+            for i in range(self.active_clients.count())
+        ]
+        inactive_clients = [
+            self.inactive_clients.item(i).text()
+            for i in range(self.inactive_clients.count())
+        ]
         for client in active_clients:
             if client in all_clients:
                 activate_client(client)

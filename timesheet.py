@@ -3,8 +3,17 @@ from datetime import datetime
 from client_lists import ClientList
 
 from PySide2.QtCore import QTimer
-from PySide2.QtWidgets import QMainWindow, QComboBox, QPushButton, QWidget, QGridLayout, QAction, QApplication, \
-    QStatusBar, QLabel, QDialog
+from PySide2.QtWidgets import (
+    QMainWindow,
+    QComboBox,
+    QPushButton,
+    QWidget,
+    QGridLayout,
+    QAction,
+    QApplication,
+    QStatusBar,
+    QLabel,
+)
 
 import populate_db
 
@@ -19,10 +28,10 @@ class MainWindow(QMainWindow):
         self.client_list = ClientList()
         # Set up a menubar and File menu
         menu_bar = self.menuBar()
-        file_menu = menu_bar.addMenu('File')
-        open_action = QAction('Open', self)
-        close_action = QAction('Close', self)
-        save_action = QAction('Save', self)
+        file_menu = menu_bar.addMenu("File")
+        open_action = QAction("Open", self)
+        close_action = QAction("Close", self)
+        save_action = QAction("Save", self)
         file_menu.addAction(open_action)
         file_menu.addAction(close_action)
         file_menu.addAction(save_action)
@@ -66,10 +75,10 @@ class EmailBlast(QWidget):
         self.combo_box.currentTextChanged.connect(self.handle_activate)
 
     def create_buttons(self):
-        self.start_button = QPushButton('Start')
+        self.start_button = QPushButton("Start")
         self.start_button.clicked.connect(self.start_timer)
 
-        self.stop_button = QPushButton('Stop')
+        self.stop_button = QPushButton("Stop")
         self.stop_button.setEnabled(False)
         self.stop_button.clicked.connect(self.end_timer)
 
@@ -98,7 +107,9 @@ class EmailBlast(QWidget):
         self.timer = QTimer()
 
     def enter_time(self):
-        populate_db.enter_time(name=self.selected, start=self.start_time, end=self.stop_time)
+        populate_db.enter_time(
+            name=self.selected, start=self.start_time, end=self.stop_time
+        )
 
     def status_timer(self):
         self.time_count += 1
