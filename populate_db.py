@@ -16,7 +16,7 @@ def make_session():
     return session
 
 
-def enter_time(name, start, end):
+def enter_time(name, total_time):
     """
     Create a Time entry in the Time database
     :param name: Client Name
@@ -25,19 +25,23 @@ def enter_time(name, start, end):
     :return: None
     """
     session = make_session()
-    entry = Time(name=name, start_time=start, end_time=end)
+    entry = Time(name=name, total_time=total_time)
     session.add(entry)
     session.commit()
 
-def enter_multiple_time(dict_list):
+
+def enter_multiple_times(time_dictionary):
     """
     Create multiple Time entries in the Time database
-    :param dictionary: List of dictionaries formatted to match the Time class
+    :param dictionary: Dictionary formatted to match the Time class
     :return: None
     """
     session = make_session()
-
-
+    for entry in time_dictionary.items():
+        name, total_time = entry
+        new_entry = Time(name=name, total_time=total_time)
+        session.add(new_entry)
+    session.commit()
 
 
 def enter_client(name):
