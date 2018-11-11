@@ -1,4 +1,6 @@
+import json
 import sys
+from collections import defaultdict
 from datetime import datetime
 
 from PySide2.QtCore import QTimer
@@ -26,6 +28,7 @@ class TimerWidget(QWidget):
 
         self.create_combo_box()
         self.create_buttons()
+        self.startup_logic()
 
         grid_layout.addWidget(self.combo_box, 0, 0, 1, 2)
         grid_layout.addWidget(self.start_button, 1, 0)
@@ -34,6 +37,10 @@ class TimerWidget(QWidget):
         self.status_label = QLabel()
         self.timer = QTimer()
         self.time_count = 0
+        # Set a Timer to autosave the current_timesheet to json
+        self.autosave_timer = QTimer()
+        self.autosave_timer.start(1000 * 60 * 5)
+        self.autosave_timer.timeout.connect(self.autosave)
 
     def create_combo_box(self):
         self.combo_box = QComboBox(self)
@@ -49,7 +56,11 @@ class TimerWidget(QWidget):
 
         self.stop_button = QPushButton("Stop")
         self.stop_button.setEnabled(False)
-        self.stop_button.clicked.connect(self.end_timer)
+        self.stop_button.clicked.connect(self.stop_timer)
+
+    def startup_logic(self):
+        self.current_timesheet = defaultdict(float)
+        # TODO: If a timesheet file already exists, import it
 
     def handle_activate(self, index):
         self.selected = self.combo_box.currentText()
@@ -65,9 +76,10 @@ class TimerWidget(QWidget):
         self.timer.start(1000 * 60)
         self.timer.timeout.connect(self.status_timer)
 
-    def end_timer(self):
+    def stop_timer(self):
         self.stop_time = datetime.now()
         self.is_running = False
+        self.current_timesheet[self.selected] += self.elapsed_time()
         self.combo_box.setEnabled(True)
         self.start_button.setEnabled(True)
         self.stop_button.setEnabled(False)
@@ -75,6 +87,9 @@ class TimerWidget(QWidget):
         self.timer.stop()
         self.time_count = 0
         self.timer = QTimer()
+
+    def elapsed_time(self):
+        return round((self.stop_time - self.start_time).seconds / 3600, 1)
 
     def save_time(self):
         populate_db.enter_time(
@@ -85,6 +100,16 @@ class TimerWidget(QWidget):
     def status_timer(self):
         self.time_count += 1
         self.status_label.setText(f"{self.selected} for {self.time_count} minutes")
+
+    def autosave(self):
+        with open('tmp_save.json', 'w') as fp:
+            if self.is_running:
+                tmp_timesheet = self.current_timesheet.copy()
+                tmp_timesheet[self.selected] += (datetime.now() - self.start_time).seconds/3600
+                json.dump(tmp_timesheet, fp)
+            else:
+                json.dump(self.current_timesheet, fp)
+
 
 
 if __name__ == "__main__":
