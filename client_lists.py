@@ -20,7 +20,8 @@ from PySide2.QtWidgets import (
     QHBoxLayout,
     QFrame,
     QDialogButtonBox,
-    QDialog)
+    QDialog,
+)
 
 
 class ClientList(QDialog):

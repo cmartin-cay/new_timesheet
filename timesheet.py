@@ -6,6 +6,7 @@ from PySide2.QtWidgets import (
     QAction,
     QApplication,
     QStatusBar,
+    QMessageBox,
 )
 
 from timer_widget import TimerWidget
@@ -44,6 +45,22 @@ class MainWindow(QMainWindow):
         self.dialog = ClientList(parent=self)
         self.dialog.setModal(True)
         self.dialog.show()
+
+    def closeEvent(self, event):
+        if self.timer_widget.current_timesheet:
+            msg_box = QMessageBox(self)
+            msg_box.setWindowTitle("Exit Warning")
+            msg_box.setText("You have not saved your Timesheet.")
+            msg_box.setInformativeText("Are you sure you want to exit?")
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            msg_box.setDefaultButton(QMessageBox.No)
+            ret = msg_box.exec_()
+            if ret == QMessageBox.No:
+                event.ignore()
+                return
+        self.timer_widget.delete_autosave()
+        event.accept()
 
 
 if __name__ == "__main__":

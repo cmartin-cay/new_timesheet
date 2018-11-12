@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 from collections import defaultdict
 from datetime import datetime
@@ -11,6 +12,7 @@ from PySide2.QtWidgets import (
     QComboBox,
     QPushButton,
     QApplication,
+    QMessageBox,
 )
 
 import populate_db
@@ -39,7 +41,7 @@ class TimerWidget(QWidget):
         self.time_count = 0
         # Set a Timer to autosave the current_timesheet to json
         self.autosave_timer = QTimer()
-        self.autosave_timer.start(1000 * 60 * 5)
+        self.autosave_timer.start(1000 * 5)
         self.autosave_timer.timeout.connect(self.autosave)
 
     def create_combo_box(self):
@@ -59,8 +61,21 @@ class TimerWidget(QWidget):
         self.stop_button.clicked.connect(self.stop_timer)
 
     def startup_logic(self):
-        self.current_timesheet = defaultdict(float)
-        # TODO: If a timesheet file already exists, import it
+        try:
+            with open("tmp_save.json", "r") as fp:
+                data = json.load(fp)
+                import_question = QMessageBox.question(
+                    self, "Found timesheet", "Import existing timehseet?"
+                )
+                if import_question == QMessageBox.Yes:
+                    self.current_timesheet = defaultdict(float, data)
+                    print(self.current_timesheet)
+                else:
+                    self.current_timesheet = defaultdict(float)
+                    self.delete_autosave()
+                    print(self.current_timesheet)
+        except FileNotFoundError:
+            self.current_timesheet = defaultdict(float)
 
     def handle_activate(self, index):
         self.selected = self.combo_box.currentText()
@@ -102,14 +117,22 @@ class TimerWidget(QWidget):
         self.status_label.setText(f"{self.selected} for {self.time_count} minutes")
 
     def autosave(self):
-        with open('tmp_save.json', 'w') as fp:
+        with open("tmp_save.json", "w") as fp:
             if self.is_running:
                 tmp_timesheet = self.current_timesheet.copy()
-                tmp_timesheet[self.selected] += (datetime.now() - self.start_time).seconds/3600
+                tmp_timesheet[self.selected] += (
+                    datetime.now() - self.start_time
+                ).seconds / 3600
                 json.dump(tmp_timesheet, fp)
             else:
                 json.dump(self.current_timesheet, fp)
 
+    def delete_autosave(self):
+        """Delete the contents of the temp save file"""
+        try:
+            os.remove("tmp_save.json")
+        except FileNotFoundError:
+            pass
 
 
 if __name__ == "__main__":
