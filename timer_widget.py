@@ -13,9 +13,10 @@ from PySide2.QtWidgets import (
     QPushButton,
     QApplication,
     QMessageBox,
-)
+    QFrame)
 
 import populate_db
+from client_lists import QHLine
 
 
 class TimerWidget(QWidget):
@@ -23,7 +24,7 @@ class TimerWidget(QWidget):
         super().__init__(parent)
         grid_layout = QGridLayout(self)
 
-        self.selected = None
+        self.selected = ""
         self.start_time = None
         self.stop_time = None
         self.is_running = False
@@ -41,7 +42,7 @@ class TimerWidget(QWidget):
         self.time_count = 0
         # Set a Timer to autosave the current_timesheet to json
         self.autosave_timer = QTimer()
-        self.autosave_timer.start(1000 * 5)
+        self.autosave_timer.start(1000 * 60 * 5)
         self.autosave_timer.timeout.connect(self.autosave)
 
     def create_combo_box(self):
@@ -69,11 +70,9 @@ class TimerWidget(QWidget):
                 )
                 if import_question == QMessageBox.Yes:
                     self.current_timesheet = defaultdict(float, data)
-                    print(self.current_timesheet)
                 else:
                     self.current_timesheet = defaultdict(float)
                     self.delete_autosave()
-                    print(self.current_timesheet)
         except FileNotFoundError:
             self.current_timesheet = defaultdict(float)
 
@@ -94,7 +93,7 @@ class TimerWidget(QWidget):
     def stop_timer(self):
         self.stop_time = datetime.now()
         self.is_running = False
-        self.current_timesheet[self.selected] += self.elapsed_time()
+        self.current_timesheet[self.selected] += self.elapsed_time(self.start_time, self.stop_time)
         self.combo_box.setEnabled(True)
         self.start_button.setEnabled(True)
         self.stop_button.setEnabled(False)
@@ -103,14 +102,16 @@ class TimerWidget(QWidget):
         self.time_count = 0
         self.timer = QTimer()
 
-    def elapsed_time(self):
-        return round((self.stop_time - self.start_time).seconds / 3600, 1)
+    def elapsed_time(self, start, stop):
+        return round((stop - start).seconds / 3600, 1)
 
     def save_time(self):
-        populate_db.enter_time(
-            name=self.selected,
-            total_time=round((self.stop_time - self.start_time).seconds / 3600, 1),
-        )
+        print(self.current_timesheet)
+        if self.is_running:
+            QMessageBox.information(self, "Timer Running", "Please stop your Timer before saving")
+        else:
+            populate_db.enter_multiple_times(time_dictionary=self.current_timesheet)
+            self.current_timesheet = defaultdict(float)
 
     def status_timer(self):
         self.time_count += 1
@@ -120,9 +121,7 @@ class TimerWidget(QWidget):
         with open("tmp_save.json", "w") as fp:
             if self.is_running:
                 tmp_timesheet = self.current_timesheet.copy()
-                tmp_timesheet[self.selected] += (
-                    datetime.now() - self.start_time
-                ).seconds / 3600
+                tmp_timesheet[self.selected] += self.elapsed_time(self.start_time, datetime.now())
                 json.dump(tmp_timesheet, fp)
             else:
                 json.dump(self.current_timesheet, fp)

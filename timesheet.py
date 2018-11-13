@@ -7,7 +7,7 @@ from PySide2.QtWidgets import (
     QApplication,
     QStatusBar,
     QMessageBox,
-)
+    QFrame)
 
 from timer_widget import TimerWidget
 
