@@ -10,6 +10,7 @@ from PySide2.QtWidgets import (
     QFrame)
 
 from timer_widget import TimerWidget
+from timesheet_viewer import Viewer
 
 
 class MainWindow(QMainWindow):
@@ -35,12 +36,15 @@ class MainWindow(QMainWindow):
         #Set up the Edit Menu
         edit_menu = menu_bar.addMenu("Edit")
         client_action = QAction("Clients", self)
+        viewer_action = QAction("Viewer", self)
         edit_menu.addAction(client_action)
+        edit_menu.addAction(viewer_action)
 
         # Connect the buttons
         save_action.triggered.connect(self.timer_widget.save_time)
         close_action.triggered.connect(self.close)
         client_action.triggered.connect(self.show_client_list)
+        viewer_action.triggered.connect(self.show_viewer)
 
         # Set up the statusbar
         self.status_bar = QStatusBar()
@@ -49,6 +53,11 @@ class MainWindow(QMainWindow):
 
     def show_client_list(self):
         self.dialog = ClientList(parent=self)
+        self.dialog.setModal(True)
+        self.dialog.show()
+
+    def show_viewer(self):
+        self.dialog = Viewer(parent=self)
         self.dialog.setModal(True)
         self.dialog.show()
 
