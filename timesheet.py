@@ -32,9 +32,15 @@ class MainWindow(QMainWindow):
         file_menu.addAction(close_action)
         file_menu.addAction(save_action)
 
+        #Set up the Edit Menu
+        edit_menu = menu_bar.addMenu("Edit")
+        client_action = QAction("Clients", self)
+        edit_menu.addAction(client_action)
+
         # Connect the buttons
         save_action.triggered.connect(self.timer_widget.save_time)
-        open_action.triggered.connect(self.show_client_list)
+        close_action.triggered.connect(self.close)
+        client_action.triggered.connect(self.show_client_list)
 
         # Set up the statusbar
         self.status_bar = QStatusBar()
@@ -47,6 +53,19 @@ class MainWindow(QMainWindow):
         self.dialog.show()
 
     def closeEvent(self, event):
+        # TODO Make an exit function
+        if self.timer_widget.is_running:
+            msg_box = QMessageBox(self)
+            msg_box.setWindowTitle("Exit Warning")
+            msg_box.setText("Your Timesheet is still running.")
+            msg_box.setInformativeText("Are you sure you want to exit?")
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            msg_box.setDefaultButton(QMessageBox.No)
+            ret = msg_box.exec_()
+            if ret == QMessageBox.No:
+                event.ignore()
+                return
         if self.timer_widget.current_timesheet:
             msg_box = QMessageBox(self)
             msg_box.setWindowTitle("Exit Warning")

@@ -103,3 +103,19 @@ def inactivate_client(name):
     if entry and entry.is_active:
         entry.is_active = False
         session.commit()
+
+def retrieve_time():
+    """
+
+    :param start_date:
+    :param end_date:
+    :return:
+    """
+    session = make_session()
+    time_entries = session.query(Time).all()
+    return time_entries
+
+res = []
+for entry in retrieve_time():
+    res.append([entry.name, entry.total_time, entry.day.strftime("%A")])
+print(res)
