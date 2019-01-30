@@ -19,7 +19,7 @@ class Viewer(QDialog):
         self.date_label.setText(date.toString())
 
 
-class DatePicker(QDateEdit, Viewer):
+class DatePicker(QDateEdit):
     def __init__(self):
         super().__init__()
         self.setDate(QDate.currentDate())
