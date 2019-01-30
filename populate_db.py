@@ -115,7 +115,8 @@ def retrieve_time():
     time_entries = session.query(Time).all()
     return time_entries
 
-res = []
-for entry in retrieve_time():
-    res.append([entry.name, entry.total_time, entry.day.strftime("%A")])
-print(res)
+if __name__ == '__main__':
+    res = []
+    for entry in retrieve_time():
+        res.append([entry.name, entry.total_time, entry.day.strftime("%A")])
+    print(res)
