@@ -53,33 +53,30 @@ class MainWindow(QMainWindow):
         self.dialog.show()
 
     def closeEvent(self, event):
-        # TODO Make an exit function
         if self.timer_widget.is_running:
-            msg_box = QMessageBox(self)
-            msg_box.setWindowTitle("Exit Warning")
-            msg_box.setText("Your Timesheet is still running.")
-            msg_box.setInformativeText("Are you sure you want to exit?")
-            msg_box.setIcon(QMessageBox.Critical)
-            msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-            msg_box.setDefaultButton(QMessageBox.No)
-            ret = msg_box.exec_()
+            ret = self.close_menu_dialog("Your Timesheet is still running!")
             if ret == QMessageBox.No:
                 event.ignore()
                 return
         if self.timer_widget.current_timesheet:
-            msg_box = QMessageBox(self)
-            msg_box.setWindowTitle("Exit Warning")
-            msg_box.setText("You have not saved your Timesheet.")
-            msg_box.setInformativeText("Are you sure you want to exit?")
-            msg_box.setIcon(QMessageBox.Critical)
-            msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-            msg_box.setDefaultButton(QMessageBox.No)
-            ret = msg_box.exec_()
+            ret = self.close_menu_dialog("You have not saved your Timesheet!")
             if ret == QMessageBox.No:
                 event.ignore()
                 return
         self.timer_widget.delete_autosave()
         event.accept()
+
+    def close_menu_dialog(self, set_text):
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle("Exit Warning")
+        msg_box.setText(set_text)
+        msg_box.setInformativeText("Are you sure you want to exit?")
+        msg_box.setIcon(QMessageBox.Critical)
+        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg_box.setDefaultButton(QMessageBox.No)
+        ret = msg_box.exec_()
+        return ret
+
 
 
 if __name__ == "__main__":
