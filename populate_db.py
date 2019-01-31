@@ -104,15 +104,14 @@ def inactivate_client(name):
         entry.is_active = False
         session.commit()
 
-def retrieve_time():
+def retrieve_time(start, end):
     """
-
-    :param start_date:
-    :param end_date:
-    :return:
+    :param start: Start Date in Python date format
+    :param end: End Date in Python date format
+    :return: SQLAlchemy query
     """
     session = make_session()
-    time_entries = session.query(Time).all()
+    time_entries = session.query(Time).filter(Time.day.between(start, end))
     return time_entries
 
 if __name__ == '__main__':

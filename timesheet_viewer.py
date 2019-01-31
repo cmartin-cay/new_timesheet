@@ -1,7 +1,11 @@
 import sys
+from datetime import timedelta
+from populate_db import retrieve_time
 
 from PySide2.QtCore import QDate, Qt
-from PySide2.QtWidgets import QDialog, QGridLayout, QCalendarWidget, QApplication, QLabel, QDateEdit
+from PySide2.QtWidgets import QDialog, QGridLayout, QCalendarWidget, QApplication, QLabel, QDateEdit, QPushButton
+
+import pandas as pd
 
 
 class Viewer(QDialog):
@@ -12,11 +16,26 @@ class Viewer(QDialog):
         self.date_picker.dateChanged.connect(self.show_date)
         self.date_label = QLabel()
         self.date_label.setText("Pick a Date")
+        self.ok_btn = QPushButton("Push Button")
+        self.ok_btn.clicked.connect(self.button_clicked)
         grid_layout.addWidget(self.date_label, 0, 0)
         grid_layout.addWidget(self.date_picker, 1, 0)
+        grid_layout.addWidget(self.ok_btn, 2, 0)
 
     def show_date(self, date):
         self.date_label.setText(date.toString())
+
+    def button_clicked(self):
+        start_date = self.date_picker.date().toPython()
+        end_date = start_date + timedelta(days=5)
+        results = retrieve_time(start_date, end_date)
+        df = pd.read_sql(results.statement, results.session.bind, parse_dates=["day"], index_col="name")\
+            .drop(['id'], axis=1)
+        print(df)
+        print()
+        dframe_columns = [start_date+timedelta(days=i) for i in range(5)]
+        dframe = pd.pivot_table(df, index=['name'], columns=['day'], aggfunc=sum)
+        print(dframe)
 
 
 class DatePicker(QDateEdit):
