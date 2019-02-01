@@ -3,7 +3,15 @@ from datetime import timedelta
 from populate_db import retrieve_time
 
 from PySide2.QtCore import QDate, Qt
-from PySide2.QtWidgets import QDialog, QGridLayout, QCalendarWidget, QApplication, QLabel, QDateEdit, QPushButton
+from PySide2.QtWidgets import (
+    QDialog,
+    QGridLayout,
+    QCalendarWidget,
+    QApplication,
+    QLabel,
+    QDateEdit,
+    QPushButton,
+)
 
 import pandas as pd
 
@@ -29,12 +37,16 @@ class Viewer(QDialog):
         start_date = self.date_picker.date().toPython()
         end_date = start_date + timedelta(days=5)
         results = retrieve_time(start_date, end_date)
-        df = pd.read_sql(results.statement, results.session.bind, parse_dates=["day"], index_col="name")\
-            .drop(['id'], axis=1)
+        df = pd.read_sql(
+            results.statement,
+            results.session.bind,
+            parse_dates=["day"],
+            index_col="name",
+        ).drop(["id"], axis=1)
         print(df)
         print()
-        dframe_columns = [start_date+timedelta(days=i) for i in range(5)]
-        dframe = pd.pivot_table(df, index=['name'], columns=['day'], aggfunc=sum)
+        dframe_columns = [start_date + timedelta(days=i) for i in range(5)]
+        dframe = pd.pivot_table(df, index=["name"], columns=["day"], aggfunc=sum)
         print(dframe)
 
 
@@ -45,13 +57,13 @@ class DatePicker(QDateEdit):
         self.setCalendarPopup(True)
         self.setCalendarWidget(Calendar())
 
+
 class Calendar(QCalendarWidget):
     def __init__(self):
         super().__init__()
         self.setGridVisible(True)
         self.setFirstDayOfWeek(Qt.Monday)
         self.setVerticalHeaderFormat(self.NoVerticalHeader)
-
 
 
 if __name__ == "__main__":

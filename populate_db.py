@@ -104,6 +104,7 @@ def inactivate_client(name):
         entry.is_active = False
         session.commit()
 
+
 def retrieve_time(start, end):
     """
     :param start: Start Date in Python date format
@@ -114,7 +115,8 @@ def retrieve_time(start, end):
     time_entries = session.query(Time).filter(Time.day.between(start, end))
     return time_entries
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     res = []
     for entry in retrieve_time():
         res.append([entry.name, entry.total_time, entry.day.strftime("%A")])

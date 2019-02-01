@@ -7,7 +7,8 @@ from PySide2.QtWidgets import (
     QApplication,
     QStatusBar,
     QMessageBox,
-    QFrame)
+    QFrame,
+)
 
 from timer_widget import TimerWidget
 from timesheet_viewer import Viewer
@@ -33,7 +34,7 @@ class MainWindow(QMainWindow):
         file_menu.addAction(close_action)
         file_menu.addAction(save_action)
 
-        #Set up the Edit Menu
+        # Set up the Edit Menu
         edit_menu = menu_bar.addMenu("Edit")
         client_action = QAction("Clients", self)
         viewer_action = QAction("Viewer", self)
@@ -85,7 +86,6 @@ class MainWindow(QMainWindow):
         msg_box.setDefaultButton(QMessageBox.No)
         ret = msg_box.exec_()
         return ret
-
 
 
 if __name__ == "__main__":
