@@ -37,17 +37,23 @@ class Viewer(QDialog):
         start_date = self.date_picker.date().toPython()
         end_date = start_date + timedelta(days=5)
         results = retrieve_time(start_date, end_date)
+        dframe_days = pd.date_range(start=start_date, periods=5)
         df = pd.read_sql(
             results.statement,
             results.session.bind,
             parse_dates=["day"],
-            index_col="name",
+            # index_col=["name"]
         ).drop(["id"], axis=1)
         print(df)
         print()
-        dframe_columns = [start_date + timedelta(days=i) for i in range(5)]
-        dframe = pd.pivot_table(df, index=["name"], columns=["day"], aggfunc=sum)
+        dframe = pd.pivot_table(df, index=["name"], aggfunc=sum)
         print(dframe)
+        df = pd.DataFrame(dframe.to_records())
+        print(df)
+        writer = pd.ExcelWriter("saved.xlsx")
+        dframe.to_excel(writer)
+        writer.save()
+
 
 
 class DatePicker(QDateEdit):
