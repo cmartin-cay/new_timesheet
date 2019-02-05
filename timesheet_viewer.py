@@ -45,20 +45,20 @@ class Viewer(QDialog):
             index_col=["name"],
         ).drop(["id"], axis=1)
         df = df.groupby(["name", "day"])["total_time"].sum().unstack(fill_value=0)
-        print(df)
-        print()
-        end_result = df.to_dict()
-        print(end_result)
-        new_df = pd.DataFrame.from_dict(end_result)
-        print(new_df)
-        # writer = pd.ExcelWriter("saved.xlsx", engine="xlsxwriter", date_format="dddd mmmm dd yyyy", datetime_format="dddd mmmm dd yyyy")
-        # new_df.to_excel(writer)
-        # writer.save()
+        writer = pd.ExcelWriter(
+            "saved.xlsx",
+            engine="xlsxwriter",
+            date_format="dddd mmm dd yy",
+            datetime_format="dddd mmm dd yy",
+        )
+        df.to_excel(writer)
+        writer.save()
 
 
 class DatePicker(QDateEdit):
     def __init__(self):
         super().__init__()
+        self.setDisplayFormat("dd/MM/yy")
         self.setDate(QDate.currentDate())
         self.setCalendarPopup(True)
         self.setCalendarWidget(Calendar())
