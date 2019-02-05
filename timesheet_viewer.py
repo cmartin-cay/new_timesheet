@@ -42,18 +42,18 @@ class Viewer(QDialog):
             results.statement,
             results.session.bind,
             parse_dates=["day"],
-            # index_col=["name"]
+            index_col=["name"],
         ).drop(["id"], axis=1)
+        df = df.groupby(["name", "day"])["total_time"].sum().unstack(fill_value=0)
         print(df)
         print()
-        dframe = pd.pivot_table(df, index=["name"], aggfunc=sum)
-        print(dframe)
-        df = pd.DataFrame(dframe.to_records())
-        print(df)
-        writer = pd.ExcelWriter("saved.xlsx")
-        dframe.to_excel(writer)
-        writer.save()
-
+        end_result = df.to_dict()
+        print(end_result)
+        new_df = pd.DataFrame.from_dict(end_result)
+        print(new_df)
+        # writer = pd.ExcelWriter("saved.xlsx", engine="xlsxwriter", date_format="dddd mmmm dd yyyy", datetime_format="dddd mmmm dd yyyy")
+        # new_df.to_excel(writer)
+        # writer.save()
 
 
 class DatePicker(QDateEdit):
