@@ -13,11 +13,9 @@ from PySide2.QtWidgets import (
     QPushButton,
     QApplication,
     QMessageBox,
-    QFrame,
 )
 
 import populate_db
-from client_lists import QHLine
 
 
 class TimerWidget(QWidget):

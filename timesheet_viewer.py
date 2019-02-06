@@ -1,7 +1,6 @@
 import sys
-from datetime import timedelta
-from populate_db import retrieve_time
 
+import pandas as pd
 from PySide2.QtCore import QDate, Qt
 from PySide2.QtWidgets import (
     QDialog,
@@ -13,31 +12,38 @@ from PySide2.QtWidgets import (
     QPushButton,
 )
 
-import pandas as pd
+from populate_db import retrieve_time
 
 
 class Viewer(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         grid_layout = QGridLayout(self)
-        self.date_picker = DatePicker()
-        self.date_picker.dateChanged.connect(self.show_date)
-        self.date_label = QLabel()
-        self.date_label.setText("Pick a Date")
-        self.ok_btn = QPushButton("Push Button")
+        self.start_date_picker = DatePicker()
+        self.start_date_picker.dateChanged.connect(self.start_date_chosen)
+        self.end_date_picker = DatePicker()
+        self.end_date_picker.setDate(QDate.currentDate().addDays(6))
+        self.end_date_picker.setMinimumDate(QDate.currentDate())
+        self.start_date_label = QLabel()
+        self.start_date_label.setText("Start Date")
+        self.end_date_label = QLabel()
+        self.end_date_label.setText("End Date")
+        self.ok_btn = QPushButton("Save to Excel")
         self.ok_btn.clicked.connect(self.button_clicked)
-        grid_layout.addWidget(self.date_label, 0, 0)
-        grid_layout.addWidget(self.date_picker, 1, 0)
-        grid_layout.addWidget(self.ok_btn, 2, 0)
+        grid_layout.addWidget(self.start_date_label, 0, 0)
+        grid_layout.addWidget(self.end_date_label, 0, 1)
+        grid_layout.addWidget(self.start_date_picker, 1, 0)
+        grid_layout.addWidget(self.end_date_picker, 1, 1)
+        grid_layout.addWidget(self.ok_btn, 2, 0, 1, 2, alignment=Qt.AlignCenter)
 
-    def show_date(self, date):
-        self.date_label.setText(date.toString())
+    def start_date_chosen(self, date):
+        self.end_date_picker.setDate(date.addDays(6))
+        self.end_date_picker.setMinimumDate(date)
 
     def button_clicked(self):
-        start_date = self.date_picker.date().toPython()
-        end_date = start_date + timedelta(days=5)
+        start_date = self.start_date_picker.date().toPython()
+        end_date = self.end_date_picker.date().toPython()
         results = retrieve_time(start_date, end_date)
-        dframe_days = pd.date_range(start=start_date, periods=5)
         df = pd.read_sql(
             results.statement,
             results.session.bind,
