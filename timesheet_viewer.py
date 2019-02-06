@@ -10,7 +10,8 @@ from PySide2.QtWidgets import (
     QLabel,
     QDateEdit,
     QPushButton,
-    QFileDialog)
+    QFileDialog,
+)
 
 from populate_db import retrieve_time
 
@@ -51,8 +52,10 @@ class Viewer(QDialog):
             index_col=["name"],
         ).drop(["id"], axis=1)
         df = df.groupby(["name", "day"])["total_time"].sum().unstack(fill_value=0)
-        #TODO consider changing to tempfile and deleting on close of excel/program
-        filename, _ = QFileDialog.getSaveFileName(filter="Excel (*.xlsx)", dir=self.end_date_picker.date().toString())
+        # TODO consider changing to tempfile and deleting on close of excel/program
+        filename, _ = QFileDialog.getSaveFileName(
+            filter="Excel (*.xlsx)", dir=self.end_date_picker.date().toString()
+        )
         if filename:
             writer = pd.ExcelWriter(
                 filename,
