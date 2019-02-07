@@ -1,3 +1,4 @@
+import os
 import sys
 
 import pandas as pd
@@ -10,7 +11,6 @@ from PySide2.QtWidgets import (
     QLabel,
     QDateEdit,
     QPushButton,
-    QFileDialog,
 )
 
 from populate_db import retrieve_time
@@ -42,9 +42,9 @@ class Viewer(QDialog):
         self.end_date_picker.setMinimumDate(date)
 
     def button_clicked(self):
-        start_date = self.start_date_picker.date().toPython()
-        end_date = self.end_date_picker.date().toPython()
-        results = retrieve_time(start_date, end_date)
+        start_date = self.start_date_picker.date()
+        end_date = self.end_date_picker.date()
+        results = retrieve_time(start_date.toPython(), end_date.toPython())
         df = pd.read_sql(
             results.statement,
             results.session.bind,
@@ -52,19 +52,18 @@ class Viewer(QDialog):
             index_col=["name"],
         ).drop(["id"], axis=1)
         df = df.groupby(["name", "day"])["total_time"].sum().unstack(fill_value=0)
-        # TODO consider changing to tempfile and deleting on close of excel/program
-        filename, _ = QFileDialog.getSaveFileName(
-            filter="Excel (*.xlsx)", dir=self.end_date_picker.date().toString()
+        start_name = start_date.toString("yyyy MMdd")
+        end_name = end_date.toString("yyyy MMdd")
+        save_filename = f"{os.getcwd()}\\timesheets\\{start_name} - {end_name}.xlsx"
+        writer = pd.ExcelWriter(
+            save_filename,
+            engine="xlsxwriter",
+            date_format="dddd mmm dd yyyy",
+            datetime_format="dddd mmm dd yyyy",
         )
-        if filename:
-            writer = pd.ExcelWriter(
-                filename,
-                engine="xlsxwriter",
-                date_format="dddd mmm dd yy",
-                datetime_format="dddd mmm dd yy",
-            )
-            df.to_excel(writer)
-            writer.save()
+        df.to_excel(writer)
+        writer.save()
+        os.startfile(save_filename)
 
 
 class DatePicker(QDateEdit):
