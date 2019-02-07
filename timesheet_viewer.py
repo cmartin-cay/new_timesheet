@@ -42,16 +42,24 @@ class Viewer(QDialog):
         self.end_date_picker.setMinimumDate(date)
 
     def button_clicked(self):
+        # Get start and end dates from the widget
         start_date = self.start_date_picker.date()
         end_date = self.end_date_picker.date()
         results = retrieve_time(start_date.toPython(), end_date.toPython())
+
+        # Use Pandas to read database query directly into a DataFrame
+        # .statement and .session.bind come directly from the SQLAlchemy query
         df = pd.read_sql(
             results.statement,
             results.session.bind,
             parse_dates=["day"],
             index_col=["name"],
         ).drop(["id"], axis=1)
+
+        # Reshape the DataFrame
         df = df.groupby(["name", "day"])["total_time"].sum().unstack(fill_value=0)
+
+        # Save the DataFrame directly to Excel and open the file for use
         start_name = start_date.toString("yyyy MMdd")
         end_name = end_date.toString("yyyy MMdd")
         save_filename = f"{os.getcwd()}\\timesheets\\{start_name} - {end_name}.xlsx"
@@ -62,6 +70,7 @@ class Viewer(QDialog):
             datetime_format="dddd mmm dd yyyy",
         )
         df.to_excel(writer)
+        # TODO format column widths
         writer.save()
         os.startfile(save_filename)
 
