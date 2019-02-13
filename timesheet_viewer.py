@@ -29,7 +29,7 @@ class Viewer(QDialog):
         self.start_date_label.setText("Start Date")
         self.end_date_label = QLabel()
         self.end_date_label.setText("End Date")
-        self.ok_btn = QPushButton("Save to Excel")
+        self.ok_btn = QPushButton("Open in Excel")
         self.ok_btn.clicked.connect(self.button_clicked)
         grid_layout.addWidget(self.start_date_label, 0, 0)
         grid_layout.addWidget(self.end_date_label, 0, 1)
@@ -58,6 +58,7 @@ class Viewer(QDialog):
 
         # Reshape the DataFrame
         df = df.groupby(["name", "day"])["total_time"].sum().unstack(fill_value=0)
+        _, width = df.shape
 
         # Save the DataFrame directly to Excel and open the file for use
         start_name = start_date.toString("yyyy MMdd")
@@ -69,8 +70,11 @@ class Viewer(QDialog):
             date_format="dddd mmm dd yyyy",
             datetime_format="dddd mmm dd yyyy",
         )
-        df.to_excel(writer)
-        # TODO format column widths
+        df.to_excel(writer, )
+        # TODO format pivot table styles
+        worksheet = writer.sheets['Sheet1']
+        worksheet.set_column(0, 0, 20)
+        worksheet.set_column(1, 1+width, 25)
         writer.save()
         os.startfile(save_filename)
 
