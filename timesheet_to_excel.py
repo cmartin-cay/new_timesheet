@@ -10,7 +10,7 @@ from PySide2.QtWidgets import (
     QApplication,
     QLabel,
     QDateEdit,
-    QPushButton,
+    QDialogButtonBox
 )
 
 from populate_db import retrieve_time
@@ -29,14 +29,17 @@ class Viewer(QDialog):
         self.start_date_label.setText("Start Date")
         self.end_date_label = QLabel()
         self.end_date_label.setText("End Date")
-        self.ok_btn = QPushButton("Open in Excel")
-        self.ok_btn.clicked.connect(self.button_clicked)
+        self.export_button_box = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+        )
+        self.export_button_box.accepted.connect(self.button_clicked)
+        self.export_button_box.rejected.connect(self.close)
         #TODO Add a cancel button
         grid_layout.addWidget(self.start_date_label, 0, 0)
         grid_layout.addWidget(self.end_date_label, 0, 1)
         grid_layout.addWidget(self.start_date_picker, 1, 0)
         grid_layout.addWidget(self.end_date_picker, 1, 1)
-        grid_layout.addWidget(self.ok_btn, 2, 0, 1, 2, alignment=Qt.AlignCenter)
+        grid_layout.addWidget(self.export_button_box, 2, 0, 2, 0)
 
     def start_date_chosen(self, date):
         self.end_date_picker.setDate(date.addDays(6))
