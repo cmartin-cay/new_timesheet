@@ -10,8 +10,8 @@ from PySide2.QtWidgets import (
 
 from client_lists import ClientList
 from timer_widget import TimerWidget
-from timesheet_to_excel import Viewer
 from timesheet_viewer import CurrentTimesheetViewer
+from timesheet_to_excel import Viewer
 
 
 class MainWindow(QMainWindow):
@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         self.dialog.show()
 
     def show_current_timesheet(self):
-        self.dialog = CurrentTimesheetViewer(parent=self)
+        self.dialog = CurrentTimesheetViewer(parent=self, timer_widget=self.timer_widget)
         self.dialog.setModal(True)
         self.dialog.show()
 

@@ -12,8 +12,7 @@ from PySide2.QtWidgets import (
     QComboBox,
     QPushButton,
     QApplication,
-    QMessageBox,
-)
+    QMessageBox)
 
 import populate_db
 
