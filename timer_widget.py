@@ -15,6 +15,7 @@ from PySide2.QtWidgets import (
     QMessageBox)
 
 import populate_db
+import current_time as ct
 
 
 class TimerWidget(QWidget):
@@ -67,12 +68,12 @@ class TimerWidget(QWidget):
                     self, "Found timesheet", "Import existing timehseet?"
                 )
                 if import_question == QMessageBox.Yes:
-                    self.current_timesheet = defaultdict(float, data)
+                    ct.current_timesheet = defaultdict(float, data)
                 else:
-                    self.current_timesheet = defaultdict(float)
+                    ct.current_timesheet = defaultdict(float)
                     self.delete_autosave()
         except FileNotFoundError:
-            self.current_timesheet = defaultdict(float)
+            ct.current_timesheet = defaultdict(float)
 
     def handle_activate(self, index):
         self.selected = self.combo_box.currentText()
@@ -91,7 +92,7 @@ class TimerWidget(QWidget):
     def stop_timer(self):
         self.stop_time = datetime.now()
         self.is_running = False
-        self.current_timesheet[self.selected] += self.elapsed_time(
+        ct.current_timesheet[self.selected] += self.elapsed_time(
             self.start_time, self.stop_time
         )
         self.combo_box.setEnabled(True)
@@ -111,8 +112,8 @@ class TimerWidget(QWidget):
                 self, "Timer Running", "Please stop your Timer before saving"
             )
         else:
-            populate_db.enter_multiple_times(time_dictionary=self.current_timesheet)
-            self.current_timesheet = defaultdict(float)
+            populate_db.enter_multiple_times(time_dictionary=ct.current_timesheet)
+            ct.current_timesheet = defaultdict(float)
 
     def status_timer(self):
         self.time_count += 1
@@ -121,13 +122,13 @@ class TimerWidget(QWidget):
     def autosave(self):
         with open("tmp_save.json", "w") as fp:
             if self.is_running:
-                tmp_timesheet = self.current_timesheet.copy()
+                tmp_timesheet = ct.current_timesheet.copy()
                 tmp_timesheet[self.selected] += self.elapsed_time(
                     self.start_time, datetime.now()
                 )
                 json.dump(tmp_timesheet, fp)
             else:
-                json.dump(self.current_timesheet, fp)
+                json.dump(ct.current_timesheet, fp)
 
     def delete_autosave(self):
         """Delete the contents of the temp save file"""
