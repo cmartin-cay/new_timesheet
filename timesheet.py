@@ -12,6 +12,7 @@ from client_lists import ClientList
 from timer_widget import TimerWidget
 from timesheet_viewer import CurrentTimesheetViewer
 from timesheet_to_excel import Viewer
+import current_time as ct
 
 
 class MainWindow(QMainWindow):
@@ -61,7 +62,7 @@ class MainWindow(QMainWindow):
         self.dialog.show()
 
     def show_current_timesheet(self):
-        self.dialog = CurrentTimesheetViewer(parent=self, timer_widget=self.timer_widget)
+        self.dialog = CurrentTimesheetViewer(parent=self)
         self.dialog.setModal(True)
         self.dialog.show()
 
@@ -76,7 +77,7 @@ class MainWindow(QMainWindow):
             if ret == QMessageBox.No:
                 event.ignore()
                 return
-        if self.timer_widget.current_timesheet:
+        if ct.current_timesheet:
             ret = self.close_menu_dialog("You have not saved your Timesheet!")
             if ret == QMessageBox.No:
                 event.ignore()
