@@ -10,7 +10,7 @@ from PySide2.QtWidgets import (
     QApplication,
     QLabel,
     QDateEdit,
-    QDialogButtonBox
+    QDialogButtonBox,
 )
 
 from populate_db import retrieve_time
@@ -34,7 +34,7 @@ class Viewer(QDialog):
         )
         self.export_button_box.accepted.connect(self.button_clicked)
         self.export_button_box.rejected.connect(self.close)
-        #TODO Add a cancel button
+        # TODO Add a cancel button
         grid_layout.addWidget(self.start_date_label, 0, 0)
         grid_layout.addWidget(self.end_date_label, 0, 1)
         grid_layout.addWidget(self.start_date_picker, 1, 0)

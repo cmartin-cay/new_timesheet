@@ -67,11 +67,15 @@ class MainWindow(QMainWindow):
 
     def clear_timesheet(self, event):
         if ct.current_timesheet:
-            ret = self.close_menu_dialog(set_text="Clear Timesheet Entries!", set_info_text="This will delete all timesheet entries for today. Are you sure?")
+            ret = self.close_menu_dialog(
+                set_text="Clear Timesheet Entries!",
+                set_info_text="This will delete all timesheet entries for today. Are you sure?",
+            )
             if ret == QMessageBox.No:
                 return
             else:
                 ct.current_timesheet = defaultdict(float)
+                return
 
     def show_current_timesheet(self):
         self.dialog = CurrentTimesheetViewer(parent=self)
@@ -85,12 +89,18 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         if self.timer_widget.is_running:
-            ret = self.close_menu_dialog(set_text="Your Timesheet is still running!", set_info_text="Are you sure you want to exit?")
+            ret = self.close_menu_dialog(
+                set_text="Your Timesheet is still running!",
+                set_info_text="Are you sure you want to exit?",
+            )
             if ret == QMessageBox.No:
                 event.ignore()
                 return
         if ct.current_timesheet:
-            ret = self.close_menu_dialog(set_text="You have not saved your Timesheet!", set_info_text="Are you sure you want to exit?")
+            ret = self.close_menu_dialog(
+                set_text="You have not saved your Timesheet!",
+                set_info_text="Are you sure you want to exit?",
+            )
             if ret == QMessageBox.No:
                 event.ignore()
                 return
