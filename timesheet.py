@@ -13,6 +13,7 @@ from timer_widget import TimerWidget
 from timesheet_viewer import CurrentTimesheetViewer
 from timesheet_to_excel import Viewer
 import current_time as ct
+from collections import defaultdict
 
 
 class MainWindow(QMainWindow):
@@ -31,9 +32,11 @@ class MainWindow(QMainWindow):
         open_action = QAction("Open", self)
         close_action = QAction("Close", self)
         save_action = QAction("Save", self)
+        clear_action = QAction("Clear", self)
         file_menu.addAction(open_action)
         file_menu.addAction(close_action)
         file_menu.addAction(save_action)
+        file_menu.addAction(clear_action)
 
         # Set up the Edit Menu
         edit_menu = menu_bar.addMenu("Edit")
@@ -46,6 +49,7 @@ class MainWindow(QMainWindow):
 
         # Connect the buttons
         save_action.triggered.connect(self.timer_widget.save_time)
+        clear_action.triggered.connect(self.clear_timesheet)
         close_action.triggered.connect(self.close)
         client_action.triggered.connect(self.show_client_list)
         viewer_action.triggered.connect(self.show_current_timesheet)
@@ -61,6 +65,14 @@ class MainWindow(QMainWindow):
         self.dialog.setModal(True)
         self.dialog.show()
 
+    def clear_timesheet(self, event):
+        if ct.current_timesheet:
+            ret = self.close_menu_dialog(set_text="Clear Timesheet Entries!", set_info_text="This will delete all timesheet entries for today. Are you sure?")
+            if ret == QMessageBox.No:
+                return
+            else:
+                ct.current_timesheet = defaultdict(float)
+
     def show_current_timesheet(self):
         self.dialog = CurrentTimesheetViewer(parent=self)
         self.dialog.setModal(True)
@@ -73,23 +85,23 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         if self.timer_widget.is_running:
-            ret = self.close_menu_dialog("Your Timesheet is still running!")
+            ret = self.close_menu_dialog(set_text="Your Timesheet is still running!", set_info_text="Are you sure you want to exit?")
             if ret == QMessageBox.No:
                 event.ignore()
                 return
         if ct.current_timesheet:
-            ret = self.close_menu_dialog("You have not saved your Timesheet!")
+            ret = self.close_menu_dialog(set_text="You have not saved your Timesheet!", set_info_text="Are you sure you want to exit?")
             if ret == QMessageBox.No:
                 event.ignore()
                 return
         self.timer_widget.delete_autosave()
         event.accept()
 
-    def close_menu_dialog(self, set_text):
+    def close_menu_dialog(self, set_text, set_info_text):
         msg_box = QMessageBox(self)
         msg_box.setWindowTitle("Exit Warning")
         msg_box.setText(set_text)
-        msg_box.setInformativeText("Are you sure you want to exit?")
+        msg_box.setInformativeText(set_info_text)
         msg_box.setIcon(QMessageBox.Critical)
         msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msg_box.setDefaultButton(QMessageBox.No)
