@@ -67,7 +67,12 @@ class Viewer(QDialog):
         # Save the DataFrame directly to Excel and open the file for use
         start_name = start_date.toString("yyyy MMdd")
         end_name = end_date.toString("yyyy MMdd")
-        save_filename = f"{os.getcwd()}\\timesheets\\{start_name} - {end_name}.xlsx"
+        save_directory = f"{os.getcwd()}\\timesheets"
+        try:
+            os.mkdir(save_directory)
+        except FileExistsError:
+            pass
+        save_filename = f"{save_directory}\\{start_name} - {end_name}.xlsx"
         writer = pd.ExcelWriter(
             save_filename,
             engine="xlsxwriter",
