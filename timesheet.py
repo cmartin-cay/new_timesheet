@@ -1,4 +1,5 @@
 import sys
+from collections import defaultdict
 
 from PySide2.QtWidgets import (
     QMainWindow,
@@ -8,12 +9,12 @@ from PySide2.QtWidgets import (
     QMessageBox,
 )
 
+import current_time as ct
+from change_time import ChangeTimeWidget
 from client_lists import ClientList
 from timer_widget import TimerWidget
-from timesheet_viewer import CurrentTimesheetViewer
 from timesheet_to_excel import Viewer
-import current_time as ct
-from collections import defaultdict
+from timesheet_viewer import CurrentTimesheetViewer
 
 
 class MainWindow(QMainWindow):
@@ -43,9 +44,11 @@ class MainWindow(QMainWindow):
         client_action = QAction("View Clients", self)
         viewer_action = QAction("Current Timesheet", self)
         export_action = QAction("Weekly Timesheet", self)
+        manual_action = QAction("Manual Change", self)
         edit_menu.addAction(client_action)
         edit_menu.addAction(viewer_action)
         edit_menu.addAction(export_action)
+        edit_menu.addAction(manual_action)
 
         # Connect the buttons
         save_action.triggered.connect(self.timer_widget.save_time)
@@ -54,6 +57,7 @@ class MainWindow(QMainWindow):
         client_action.triggered.connect(self.show_client_list)
         viewer_action.triggered.connect(self.show_current_timesheet)
         export_action.triggered.connect(self.show_viewer)
+        manual_action.triggered.connect(self.show_manual)
 
         # Set up the statusbar
         self.status_bar = QStatusBar()
@@ -84,6 +88,11 @@ class MainWindow(QMainWindow):
 
     def show_viewer(self):
         self.dialog = Viewer(parent=self)
+        self.dialog.setModal(True)
+        self.dialog.show()
+
+    def show_manual(self):
+        self.dialog = ChangeTimeWidget(parent=self)
         self.dialog.setModal(True)
         self.dialog.show()
 

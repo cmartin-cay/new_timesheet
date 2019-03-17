@@ -15,8 +15,8 @@ from PySide2.QtWidgets import (
     QMessageBox,
 )
 
-import populate_db
 import current_time as ct
+import populate_db
 
 
 class TimerWidget(QWidget):
@@ -46,6 +46,7 @@ class TimerWidget(QWidget):
         self.autosave_timer.timeout.connect(self.autosave)
 
     def create_combo_box(self):
+        # TODO Insert policy for clients not in the default client list
         self.combo_box = QComboBox(self)
         self.combo_box.setEditable(True)
         self.combo_box.addItems(populate_db.show_clients(active=True))
