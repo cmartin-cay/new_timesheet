@@ -1,17 +1,10 @@
 import functools
 import sys
-from populate_db import (
-    show_clients,
-    show_all_clients,
-    activate_client,
-    enter_client,
-    inactivate_client,
-)
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QListWidget,
-    QWidget,
+    QLabel,
     QApplication,
     QGridLayout,
     QPushButton,
@@ -21,6 +14,14 @@ from PySide2.QtWidgets import (
     QFrame,
     QDialogButtonBox,
     QDialog,
+)
+
+from populate_db import (
+    show_clients,
+    show_all_clients,
+    activate_client,
+    enter_client,
+    inactivate_client,
 )
 
 
@@ -60,14 +61,19 @@ class ClientList(QDialog):
         self.button_box.accepted.connect(self.update_client_db)
         self.button_box.rejected.connect(self.close)
 
+        self.active_label = QLabel("Active Clients")
+        self.inactive_label = QLabel("Inactive Clients")
+
         grid_layout.addLayout(add_client_row, 0, 0, 1, 2)
         grid_layout.addWidget(QHLine(), 1, 0, 1, 3)
-        grid_layout.addWidget(self.active_clients, 2, 0, 2, 1)
-        grid_layout.addWidget(self.move_left, 2, 1, 1, 1, Qt.AlignBottom)
-        grid_layout.addWidget(self.move_right, 3, 1, 1, 1, Qt.AlignTop)
-        grid_layout.addWidget(self.inactive_clients, 2, 2, 2, 1)
-        grid_layout.addWidget(QHLine(), 4, 0, 1, 3)
-        grid_layout.addWidget(self.button_box, 5, 0, 1, 3, Qt.AlignCenter)
+        grid_layout.addWidget(self.active_label, 2, 0)
+        grid_layout.addWidget(self.inactive_label, 2, 2)
+        grid_layout.addWidget(self.active_clients, 3, 0, 2, 1)
+        grid_layout.addWidget(self.move_left, 3, 1, 1, 1, Qt.AlignBottom)
+        grid_layout.addWidget(self.move_right, 4, 1, 1, 1, Qt.AlignTop)
+        grid_layout.addWidget(self.inactive_clients, 3, 2, 2, 1)
+        grid_layout.addWidget(QHLine(), 5, 0, 1, 3)
+        grid_layout.addWidget(self.button_box, 6, 0, 1, 3, Qt.AlignCenter)
 
     def update_client_db(self):
         # TODO bulk inserstion of database. Currently each client in the list is a db commit
@@ -91,6 +97,8 @@ class ClientList(QDialog):
             else:
                 enter_client(client)
                 inactivate_client(client)
+        # Refresh the Timer Widget in the QMainWindow to show the new active and inactive clients
+        # Consider adding a signal/slot for this behavior
         self.parent().timer_widget.combo_box.clear()
         self.parent().timer_widget.combo_box.addItems(show_clients(active=True))
         self.parent().timer_widget.combo_box.setCurrentIndex(-1)

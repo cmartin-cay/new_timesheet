@@ -48,6 +48,7 @@ class TimerWidget(QWidget):
     def create_combo_box(self):
         # TODO Insert policy for clients not in the default client list
         self.combo_box = QComboBox(self)
+        self.combo_box.setMinimumWidth(200)
         self.combo_box.setEditable(True)
         self.combo_box.addItems(populate_db.show_clients(active=True))
         self.combo_box.setCurrentIndex(-1)
