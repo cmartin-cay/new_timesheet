@@ -28,6 +28,7 @@ from populate_db import (
 class ClientList(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setWindowTitle("Client List")
         grid_layout = QGridLayout(self)
 
         self.active_clients = ClientListWidget()

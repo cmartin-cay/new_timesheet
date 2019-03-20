@@ -2,14 +2,15 @@ import sys
 
 from PySide2.QtWidgets import QApplication, QDialog, QGridLayout, QDialogButtonBox
 
-from client_lists import ClientListWidget
 import current_time as ct
+from client_lists import ClientListWidget
 
 
 class CurrentTimesheetViewer(QDialog):
     # TODO make this into a viwer with 2 columns, one for names and one for times (this will need QTableView)
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setWindowTitle("Current Timesheet")
         grid_layout = QGridLayout(self)
         self.current_viewer = ClientListWidget()
         for key, val in ct.current_timesheet.items():
