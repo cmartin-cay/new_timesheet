@@ -1,3 +1,4 @@
+# TODO Fix vertical resizing issues
 import functools
 import sys
 
@@ -29,7 +30,8 @@ class ClientList(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Client List")
-        grid_layout = QGridLayout(self)
+        self.setMinimumWidth(630)
+        self.setMinimumHeight(320)
 
         self.active_clients = ClientListWidget()
         self.active_clients.addItems(show_clients(active=True))
@@ -65,6 +67,7 @@ class ClientList(QDialog):
         self.active_label = QLabel("Active Clients")
         self.inactive_label = QLabel("Inactive Clients")
 
+        grid_layout = QGridLayout(self)
         grid_layout.addLayout(add_client_row, 0, 0, 1, 2)
         grid_layout.addWidget(QHLine(), 1, 0, 1, 3)
         grid_layout.addWidget(self.active_label, 2, 0)
@@ -134,4 +137,6 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = ClientList()
     main_window.show()
+    print(main_window.geometry().width())
+    print(main_window.geometry().height())
     sys.exit(app.exec_())
