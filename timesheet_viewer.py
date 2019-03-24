@@ -1,20 +1,38 @@
 import sys
 
-from PySide2.QtWidgets import QApplication, QDialog, QGridLayout, QDialogButtonBox
+from PySide2.QtWidgets import (
+    QApplication,
+    QDialog,
+    QGridLayout,
+    QDialogButtonBox,
+    QTableWidget,
+    QTableWidgetItem,
+    QAbstractItemView,
+)
 
-from client_lists import ClientListWidget
 import current_time as ct
 
 
 class CurrentTimesheetViewer(QDialog):
-    # TODO make this into a viwer with 2 columns, one for names and one for times (this will need QTableView)
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setWindowTitle("Current Timesheet")
         grid_layout = QGridLayout(self)
-        self.current_viewer = ClientListWidget()
-        for key, val in ct.current_timesheet.items():
-            entry = f'{key}{":":<5}   {val:>5}'
-            self.current_viewer.addItem(entry)
+        rows = len(ct.current_timesheet)
+        entries = list(ct.current_timesheet.items())
+        self.current_viewer = QTableWidget()
+        self.current_viewer.setRowCount(rows)
+        self.current_viewer.setColumnCount(2)
+        self.current_viewer.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.current_viewer.setSelectionMode(QAbstractItemView.NoSelection)
+        self.current_viewer.setHorizontalHeaderLabels(["Client", "Time"])
+        for i in range(0, rows):
+            client, time = entries[i]
+            client = QTableWidgetItem(client)
+            time = QTableWidgetItem(str(time))
+            self.current_viewer.setItem(i, 0, client)
+            self.current_viewer.setItem(i, 1, time)
+        self.current_viewer.resizeColumnsToContents()
         self.button_box = QDialogButtonBox(QDialogButtonBox.Ok)
         self.button_box.accepted.connect(self.close)
         grid_layout.addWidget(self.current_viewer)
