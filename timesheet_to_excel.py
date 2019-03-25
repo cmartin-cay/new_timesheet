@@ -19,6 +19,7 @@ from populate_db import retrieve_time
 class Viewer(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setWindowTitle("Export Timesheet")
         grid_layout = QGridLayout(self)
         self.start_date_picker = DatePicker()
         self.start_date_picker.dateChanged.connect(self.start_date_chosen)
