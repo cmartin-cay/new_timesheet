@@ -2,7 +2,8 @@ import sys
 
 from PySide2.QtWidgets import (
     QDialog,
-    QGridLayout,
+    QFormLayout,
+    QVBoxLayout,
     QComboBox,
     QApplication,
     QDoubleSpinBox,
@@ -16,9 +17,11 @@ import populate_db
 
 class ChangeTimeWidget(QDialog):
     def __init__(self, parent=None):
+        #TODO Convert to a form layout
         super().__init__(parent)
-        grid_layout = QGridLayout(self)
-        self.combo_box = QComboBox(self)
+        self.setWindowTitle("Change Time")
+        self.combo_box = QComboBox()
+
         self.spinner = Spinner()
         self.client_text = QLabel("Client")
         self.time_text = QLabel("Time")
@@ -33,11 +36,13 @@ class ChangeTimeWidget(QDialog):
         self.save_changes_button_box.accepted.connect(self.update_timesheet)
         self.save_changes_button_box.rejected.connect(self.close)
 
-        grid_layout.addWidget(self.client_text, 0, 0, 1, 2)
-        grid_layout.addWidget(self.time_text, 1, 0)
-        grid_layout.addWidget(self.combo_box, 0, 1, 1, 2)
-        grid_layout.addWidget(self.spinner, 1, 1)
-        grid_layout.addWidget(self.save_changes_button_box, 2, 0, 1, 2)
+        main_layout = QVBoxLayout()
+        form_layout = QFormLayout()
+        form_layout.addRow("Client", self.combo_box)
+        form_layout.addRow("Time", self.spinner)
+        main_layout.addLayout(form_layout)
+        main_layout.addWidget(self.save_changes_button_box)
+        self.setLayout(main_layout)
 
     def update_timesheet(self):
         selected_client = self.combo_box.currentText()
