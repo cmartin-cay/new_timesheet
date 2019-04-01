@@ -7,7 +7,6 @@ from PySide2.QtWidgets import (
     QComboBox,
     QApplication,
     QDoubleSpinBox,
-    QLabel,
     QDialogButtonBox,
 )
 
@@ -20,12 +19,10 @@ class ChangeTimeWidget(QDialog):
         #TODO Convert to a form layout
         super().__init__(parent)
         self.setWindowTitle("Change Time")
+        self.setMinimumWidth(210)
         self.combo_box = QComboBox()
 
         self.spinner = Spinner()
-        self.client_text = QLabel("Client")
-        self.time_text = QLabel("Time")
-
         self.combo_box.setEditable(True)
         self.combo_box.addItems(self.get_all_clients())
         self.combo_box.setCurrentIndex(-1)
@@ -38,8 +35,9 @@ class ChangeTimeWidget(QDialog):
 
         main_layout = QVBoxLayout()
         form_layout = QFormLayout()
-        form_layout.addRow("Client", self.combo_box)
-        form_layout.addRow("Time", self.spinner)
+        form_layout.setHorizontalSpacing(20)
+        form_layout.addRow("Client:", self.combo_box)
+        form_layout.addRow("Time:", self.spinner)
         main_layout.addLayout(form_layout)
         main_layout.addWidget(self.save_changes_button_box)
         self.setLayout(main_layout)
