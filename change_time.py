@@ -1,3 +1,5 @@
+#TODO Add text notification that update was made
+
 import sys
 
 from PySide2.QtWidgets import (
@@ -27,9 +29,9 @@ class ChangeTimeWidget(QDialog):
         self.combo_box.addItems(self.get_all_clients())
         self.combo_box.setCurrentIndex(-1)
 
-        self.save_changes_button_box = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
-        )
+        self.save_changes_button_box = QDialogButtonBox()
+        self.save_changes_button_box.addButton("Update", QDialogButtonBox.AcceptRole)
+        self.save_changes_button_box.addButton("Close", QDialogButtonBox.RejectRole)
         self.save_changes_button_box.accepted.connect(self.update_timesheet)
         self.save_changes_button_box.rejected.connect(self.close)
 
