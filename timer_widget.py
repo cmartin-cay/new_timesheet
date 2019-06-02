@@ -60,7 +60,7 @@ class TimerWidget(QWidget):
         self.start_button.setStyleSheet(":enabled {background-color: green}")
         self.start_button.clicked.connect(self.start_timer)
         self.stop_button = QPushButton("Stop")
-        self.stop_button.setStyleSheet(":enabled {background-color: #FF0000}")
+        self.stop_button.setStyleSheet(":enabled {background-color: #bb0000}")
         self.stop_button.setEnabled(False)
         self.stop_button.clicked.connect(self.stop_timer)
 
