@@ -66,7 +66,7 @@ def show_clients(active=True):
     """
     session = make_session()
     clients = session.query(Client.name).filter(Client.is_active == active).all()
-    return [client for client, in clients]
+    return sorted([client for client, in clients], key=str.casefold)
 
 
 def show_all_clients():
