@@ -1,9 +1,8 @@
 import sys
 from collections import defaultdict
-
-from PySide2.QtWidgets import (
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (
     QMainWindow,
-    QAction,
     QApplication,
     QStatusBar,
     QMessageBox,
@@ -124,7 +123,7 @@ class MainWindow(QMainWindow):
         msg_box.setIcon(QMessageBox.Critical)
         msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msg_box.setDefaultButton(QMessageBox.No)
-        ret = msg_box.exec_()
+        ret = msg_box.exec()
         return ret
 
 
@@ -132,4 +131,4 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = MainWindow()
     main_window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

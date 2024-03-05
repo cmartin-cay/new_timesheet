@@ -4,8 +4,8 @@ import sys
 from collections import defaultdict
 from datetime import datetime
 
-from PySide2.QtCore import QTimer
-from PySide2.QtWidgets import (
+from PySide6.QtCore import QTimer
+from PySide6.QtWidgets import (
     QWidget,
     QGridLayout,
     QLabel,
@@ -146,4 +146,4 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = TimerWidget()
     main_window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

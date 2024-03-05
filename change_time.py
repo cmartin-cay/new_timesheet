@@ -2,7 +2,7 @@
 
 import sys
 
-from PySide2.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog,
     QFormLayout,
     QVBoxLayout,
@@ -69,4 +69,4 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = ChangeTimeWidget()
     main_window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

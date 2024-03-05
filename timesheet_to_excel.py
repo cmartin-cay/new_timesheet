@@ -2,8 +2,8 @@ import os
 import sys
 
 import pandas as pd
-from PySide2.QtCore import QDate, Qt
-from PySide2.QtWidgets import (
+from PySide6.QtCore import QDate, Qt
+from PySide6.QtWidgets import (
     QDialog,
     QGridLayout,
     QCalendarWidget,
@@ -104,11 +104,11 @@ class Calendar(QCalendarWidget):
         super().__init__()
         self.setGridVisible(True)
         self.setFirstDayOfWeek(Qt.Monday)
-        self.setVerticalHeaderFormat(self.NoVerticalHeader)
+        self.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = Viewer()
     main_window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

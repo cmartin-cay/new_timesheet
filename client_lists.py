@@ -2,8 +2,8 @@
 import functools
 import sys
 
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import (
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
     QListWidget,
     QLabel,
     QApplication,
@@ -139,4 +139,4 @@ if __name__ == "__main__":
     main_window.show()
     print(main_window.geometry().width())
     print(main_window.geometry().height())
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
