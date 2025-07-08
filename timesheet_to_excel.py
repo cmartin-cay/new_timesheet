@@ -86,7 +86,7 @@ class Viewer(QDialog):
         worksheet = writer.sheets["Sheet1"]
         worksheet.set_column(0, 0, 20)
         worksheet.set_column(1, 1 + width, 25)
-        writer.save()
+        writer.close()
         os.startfile(save_filename)
 
 
